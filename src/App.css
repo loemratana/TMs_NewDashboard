@@ -903,6 +903,7 @@ input[type="date"]::-webkit-clear-button { display: none; }
 /* Responsive */
 @media (max-width: 768px) {
   .sidebar { transform: translateX(calc(-1 * var(--sidebar-width))); }
+  .sidebar:not(.hidden) { transform: translateX(0) !important; }
   .main-content { margin-left: 0 !important; width: 100% !important; }
   .content-area { padding: 16px; }
   .navbar-inner { padding: 0 16px; }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import Navbar from "./components/Navbar";
@@ -17,10 +17,25 @@ const App = () => {
     const savedUser = localStorage.getItem("user");
     return savedUser ? JSON.parse(savedUser) : null;
   });
-  const [isSidebarVisible, setIsSidebarVisible] = useState(true);
+  const [isSidebarVisible, setIsSidebarVisible] = useState(window.innerWidth > 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        setIsSidebarVisible(false);
+      } else {
+        setIsSidebarVisible(true);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleMenuClick = (component) => {
     setActiveComponent(component);
+    if (window.innerWidth <= 768) {
+      setIsSidebarVisible(false);
+    }
   };
 
   const handleLogin = (user) => {
@@ -85,6 +100,22 @@ const App = () => {
                   loggedInUser={loggedInUser}
                   isVisible={isSidebarVisible}
                 />
+                {window.innerWidth <= 768 && isSidebarVisible && (
+                  <div
+                    className="sidebar-backdrop"
+                    onClick={() => setIsSidebarVisible(false)}
+                    style={{
+                      position: 'fixed',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      backgroundColor: 'rgba(0,0,0,0.4)',
+                      zIndex: 999,
+                      backdropFilter: 'blur(2px)'
+                    }}
+                  />
+                )}
                 <div className={`main-content ${isSidebarVisible ? '' : 'full-width'}`}>
                   <Navbar
                     onLogout={handleLogout}
